@@ -35,7 +35,11 @@ prove one-by-one.
 -/
 
 example (a b : ℝ) (ha : 0 < a) (hb : 0 < b) : 0 < a^2 + b^2 := by {
-  sorry
+  apply add_pos
+  apply sq_pos_of_pos
+  apply ha
+  apply sq_pos_of_pos
+  apply hb
 }
 
 /-
@@ -51,16 +55,27 @@ of `by` and `exact` and directly put the argument of `exact` after the `:=`.
 -/
 
 example (a : ℝ) (ha : 0 < a) : 0 < (a^2)^2 := by {
-  have h2 : 0 < a^2 := by     -- we declare `0 < a^2` as a subgoal
+  have h2 : 0 < a^2 := by {    -- we declare `0 < a^2` as a subgoal
     apply sq_pos_of_pos  -- we start proving the subgoal
     exact ha             -- this line is indented, so part of the proof of the subgoal
+  }
   exact sq_pos_of_pos h2 -- we finished the subgoal, and now we prove the main goal using it.
 }
 
 /- Now prove the same lemma as before using forwards reasoning. -/
 
 example (a b : ℝ) (ha : 0 < a) (hb : 0 < b) : 0 < a^2 + b^2 := by {
-  sorry
+  have ha' : 0 < a^2 := by {
+    apply sq_pos_of_pos
+    apply ha
+  }
+  have hb' : 0 < b^2 := by {
+    apply sq_pos_of_pos
+    apply hb
+  }
+  apply add_pos
+  apply ha'
+  apply hb'
 }
 
 
@@ -190,4 +205,3 @@ equivalences. You learned about tactics:
 * `have`
 * `constructor`
 -/
-
