@@ -91,7 +91,11 @@ symbol you can put your mouse cursor above the symbol and wait for one second.
 -/
 
 example (f g : ℝ → ℝ) (hf : even_fun f) : even_fun (g ∘ f) := by {
-  sorry
+  intros x
+  calc
+    (g ∘ f) (-x) = g (f (-x)) := by {rfl}
+               _ = g (f (x)) := by {rw [hf]}
+               _ = (g ∘ f) (x) := by {rfl}
 }
 
 /-
@@ -164,7 +168,10 @@ example (f g : ℝ → ℝ) (hf : non_decreasing f) (hg : non_decreasing g) :
 
 example (f g : ℝ → ℝ) (hf : non_decreasing f) (hg : non_increasing g) :
     non_increasing (g ∘ f) := by {
-  sorry
+  intros x₁ x₂ h
+  apply hg
+  apply hf
+  apply h
 }
 
 /- # Finding lemmas
@@ -179,14 +186,15 @@ The following exercises teach you two such techniques.
 /- Use `simp` to prove the following. Note that `X : Set ℝ`
 means that `X` is a set containing (only) real numbers. -/
 example (x : ℝ) (X Y : Set ℝ) (hx : x ∈ X) : x ∈ (X ∩ Y) ∪ (X \ Y) := by {
-  sorry
+  simp
+  apply hx
 }
 
 /- Use `apply?` to find the lemma that every continuous function with compact support
 has a global minimum. -/
 
 example (f : ℝ → ℝ) (hf : Continuous f) (h2f : HasCompactSupport f) : ∃ x, ∀ y, f x ≤ f y := by {
-  sorry
+  apply?
 }
 
 /-
@@ -214,4 +222,3 @@ You can start with specialized files in the `Topics` folder. You have choice bet
   It ends with a constructor of the product topology and its universal property
   manipulating as few open sets as possible.
 -/
-
