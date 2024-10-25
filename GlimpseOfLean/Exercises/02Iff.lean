@@ -94,7 +94,11 @@ example (a : ℝ) : a > 0 → b > 0 → a + b > 0 := by {
 /- Now prove the following simple statement in propositional logic.
 Note that `p → q → r` means `p → (q → r)`. -/
 example (p q r : Prop) : (p → q) → (p → q → r) → p → r := by {
-  sorry
+  intros h1 h2 h3
+  apply h2
+  exact h3
+  apply h1
+  exact h3
 }
 
 /- # Equivalences
@@ -112,7 +116,7 @@ In the following exercises we will use the lemma:
   `sub_nonneg : 0 ≤ y - x ↔ x ≤ y`
 -/
 
-example {a b c : ℝ} : c + a ≤ c + b ↔ a ≤ b := by {
+example (a b c : ℝ) : c + a ≤ c + b ↔ a ≤ b := by {
   rw [← sub_nonneg]
   have key : (c + b) - (c + a) = b - a := by-- Here we introduce an intermediate statement named key
     ring   -- and prove it in an indented block (here this block is only one line long)
@@ -125,7 +129,9 @@ Let's prove a variation
 -/
 
 example {a b : ℝ} (c : ℝ) : a + c ≤ b + c ↔ a ≤ b := by {
-  sorry
+  rw [← sub_nonneg]
+  ring
+  rw [sub_nonneg]
 }
 
 /-
@@ -163,7 +169,9 @@ example {a b : ℝ}  (ha : 0 ≤ a) : b ≤ a + b := by {
 /- Let's do a variant using `add_le_add_iff_left a : a + b ≤ a + c ↔ b ≤ c` instead. -/
 
 example (a b : ℝ) (hb : 0 ≤ b) : a ≤ a + b := by {
-  sorry
+  rw [← sub_nonneg]
+  ring
+  exact hb
 }
 
 /-
@@ -194,7 +202,14 @@ example (a b : ℝ) : (a-b)*(a+b) = 0 ↔ a^2 = b^2 := by {
 /- You can try it yourself in this exercise. -/
 
 example (a b : ℝ) : a = b ↔ b - a = 0 := by {
-  sorry
+  constructor
+  . intros h
+    rw [h]
+    ring
+  . intros h
+    calc
+      a = a + (b - a) := by {rw [h]; ring}
+      _ = b := by ring
 }
 
 /-
