@@ -260,7 +260,13 @@ In the exercise, we use `∃ n ≥ N, ...` which is the abbreviation of
 /-- Extractions take arbitrarily large values for arbitrarily large
 inputs. -/
 lemma extraction_ge : extraction φ → ∀ N N', ∃ n ≥ N', φ n ≥ N := by {
-  sorry
+  intro hyp N N'
+  use (max N N')
+  constructor
+  . apply le_max_right
+  . calc
+    φ (max N N') ≥ max N N' := by { apply id_le_extraction' ; exact hyp }
+               _ ≥ N := by { apply le_max_left }
 }
 
 /- A real number `a` is a cluster point of a sequence `u`
