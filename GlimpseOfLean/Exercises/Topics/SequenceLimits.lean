@@ -87,8 +87,8 @@ or the primed version:
 -- Assume `l > 0`. Then `u` ts to `l` implies `u n ≥ l/2` for large enough `n`
 example (h : seq_limit u l) (hl : l > 0) :
     ∃ N, ∀ n ≥ N, u n ≥ l/2 := by {
-  --unfold seq_limit at h
-  have h2: (l/2) > 0 := by linarith
+  unfold seq_limit at h
+  have h2 : (l/2) > 0 := by linarith
   specialize h (l/2) h2
   rcases h with ⟨N, hN⟩
   use N
@@ -136,8 +136,37 @@ example (hu : seq_limit u l) (hv : seq_limit v l') :
 example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' : ∀ n, v n ≤ w n) :
     seq_limit v l := by {
   intro ε hε
-
-  sorry
+  have h2 : (ε/3) > 0 := by linarith
+  specialize hu (ε/3) h2
+  specialize hw (ε/3) h2
+  rcases hu with ⟨Nu, hNu⟩
+  rcases hw with ⟨Nw, hNw⟩
+  use (max Nu Nw)
+  intro n hmax
+  rw [ge_max_iff] at hmax
+  rcases hmax with ⟨hnNu, hnNw⟩
+  specialize hNu n hnNu
+  specialize hNw n hnNw
+  have huw : |u n - w n| ≤ 2*ε/3 := by {
+    calc
+    |u n - w n| ≤ |u n - l| + |w n - l| := by { apply abs_sub_le' (u n) l (w n) }
+              _ ≤ ε/3 + ε/3 := by { linarith }
+              _ = 2*ε/3 := by { ring }
+  }
+  have hvw : |v n - w n| ≤ 2*ε/3 := by {
+    specialize h n
+    specialize h' n
+    rw [abs_le] at huw
+    rcases huw with ⟨huw1, huw2⟩
+    rw [abs_le]
+    constructor
+    . linarith
+    . linarith
+  }
+  calc
+    |v n - l| ≤ |v n - w n| + |w n - l| := by { apply abs_sub_le (v n) (w n) l }
+            _ ≤ 2*ε/3 + ε/3 := by { linarith }
+            _ = ε := by { ring }
 }
 
 
