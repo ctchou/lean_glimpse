@@ -22,11 +22,11 @@ Let's prove some exercises using `linarith`.
 -/
 
 example (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) : 0 ≤ a + b := by {
-  sorry
+  linarith
 }
 
 example (a b c d : ℝ) (hab : a ≤ b) (hcd : c ≤ d) : a + c ≤ b + d := by {
-  sorry
+  linarith
 }
 
 /-
@@ -61,9 +61,13 @@ where `by linarith` will provide the proof of `δ/2 > 0` expected by Lean.
 /- If u is constant with value l then u tends to l.
 Hint: `simp` can rewrite `|1 - 1|` to `0` -/
 example (h : ∀ n, u n = l) : seq_limit u l := by {
-  sorry
+  intro ε hε
+  use 0
+  intro n _
+  rw [h]
+  simp
+  linarith
 }
-
 
 /- When dealing with absolute values, we'll use lemmas:
 
@@ -83,9 +87,16 @@ or the primed version:
 -- Assume `l > 0`. Then `u` ts to `l` implies `u n ≥ l/2` for large enough `n`
 example (h : seq_limit u l) (hl : l > 0) :
     ∃ N, ∀ n ≥ N, u n ≥ l/2 := by {
-  sorry
+  --unfold seq_limit at h
+  have h2: (l/2) > 0 := by linarith
+  specialize h (l/2) h2
+  rcases h with ⟨N, hN⟩
+  use N
+  intro n hn
+  specialize hN n hn
+  rw [abs_le] at hN
+  linarith
 }
-
 
 /-
 When dealing with max, you can use
@@ -112,7 +123,7 @@ example (hu : seq_limit u l) (hv : seq_limit v l') :
   rcases hn with ⟨_hn₁, hn₂⟩
   have fact₁ : |u n - l| ≤ ε/2 := hN₁ n (by linarith)
   have fact₂ : |v n - l'| ≤ ε/2 := hN₂ n (by linarith)
-  
+
   calc
     |(u + v) n - (l + l')| = |u n + v n - (l + l')|   := rfl
     _ = |(u n - l) + (v n - l')|                      := by ring
@@ -124,6 +135,8 @@ example (hu : seq_limit u l) (hv : seq_limit v l') :
 /- Let's do something similar: the squeezing theorem. -/
 example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' : ∀ n, v n ≤ w n) :
     seq_limit v l := by {
+  intro ε hε
+
   sorry
 }
 
@@ -232,4 +245,3 @@ In the next exercise, you can reuse
 
 example (hu : CauchySequence u) (hl : cluster_point u l) : seq_limit u l := by
   sorry
-
