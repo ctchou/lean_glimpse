@@ -157,7 +157,7 @@ example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' :
     specialize h n
     specialize h' n
     rw [abs_le] at huw
-    rcases huw with ⟨huw1, huw2⟩
+    rcases huw with ⟨huw1, _⟩
     rw [abs_le]
     constructor
     . linarith
@@ -170,7 +170,6 @@ example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' :
 }
 
 
-
 /- In the next exercise, we'll use
 
 `eq_of_abs_sub_le_all (x y : ℝ) : (∀ ε > 0, |x - y| ≤ ε) → x = y`
@@ -181,9 +180,28 @@ Recall we listed three variations on the triangle inequality at the beginning of
 -- A sequence admits at most one limit. You will be able to use that lemma in the following
 -- exercises.
 lemma uniq_limit : seq_limit u l → seq_limit u l' → l = l' := by {
-  sorry
+  intro h h'
+  have lem : ∀ ε > 0, |l - l'| ≤ ε := by {
+    intro ε hε
+    have hε2 : ε/2 > 0 := by {linarith }
+    specialize h (ε/2) hε2
+    specialize h' (ε/2) hε2
+    rcases h with ⟨N, hN⟩
+    rcases h' with ⟨N', hN'⟩
+    have hmaxN : max N N' ≥ N := by { apply le_max_left }
+    have hmaxN' : max N N' ≥ N' := by { apply le_max_right }
+    specialize hN (max N N') hmaxN
+    specialize hN' (max N N') hmaxN'
+    calc
+      |l - l'| ≤ |l - u (max N N')| + |u (max N N') - l'| := by {
+        apply abs_sub_le l (u (max N N')) l'
+      }
+             _ = |u (max N N') - l| + |u (max N N') - l'| := by { rw [abs_sub_comm] }
+             _ ≤ ε := by { linarith }
+  }
+  apply eq_of_abs_sub_le_all
+  exact lem
 }
-
 
 
 /-
@@ -196,7 +214,19 @@ def is_seq_sup (M : ℝ) (u : ℕ → ℝ) :=
 (∀ n, u n ≤ M) ∧ ∀ ε > 0, ∃ n₀, u n₀ ≥ M - ε
 
 example (M : ℝ) (h : is_seq_sup M u) (h' : non_decreasing u) : seq_limit u M := by {
-  sorry
+  intro ε hε
+  rcases h with ⟨h1, h2⟩
+  specialize h2 ε hε
+  rcases h2 with ⟨n₀, hn₀⟩
+  use n₀
+  intro n hn
+  unfold non_decreasing at h'
+  have hn1 : u n₀ ≤ u n := by { apply h' ; linarith }
+  have hn2 : u n ≤ M := by { apply h1 }
+  rw [abs_le]
+  constructor
+  . linarith
+  . linarith
 }
 
 /-
