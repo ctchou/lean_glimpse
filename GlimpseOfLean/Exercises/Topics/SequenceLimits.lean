@@ -310,14 +310,21 @@ if `u` has a subsequence converging to `a`.
 `def cluster_point (u : ℕ → ℝ) (a : ℝ) := ∃ φ, extraction φ ∧ seq_limit (u ∘ φ) a`
 -/
 
-
 /-- If `a` is a cluster point of `u` then there are values of
 `u` arbitrarily close to `a` for arbitrarily large input. -/
 lemma near_cluster :
   cluster_point u a → ∀ ε > 0, ∀ N, ∃ n ≥ N, |u n - a| ≤ ε := by {
-  sorry
+  intro hcp ε hε N
+  unfold cluster_point at hcp
+  rcases hcp with ⟨e, ⟨he, hsl⟩⟩
+  specialize hsl ε hε
+  rcases hsl with ⟨N1, h1⟩
+  have h2 : ∃ n ≥ N1, e n ≥ N := by { apply (extraction_ge he N N1) }
+  rcases h2 with ⟨n, ⟨hn2, he2⟩⟩
+  specialize h1 n hn2
+  use (e n)
+  tauto
 }
-
 
 /-- If `u` tends to `l` then its subsequences tend to `l`. -/
 lemma subseq_tendsto_of_tendsto' (h : seq_limit u l) (hφ : extraction φ) :
