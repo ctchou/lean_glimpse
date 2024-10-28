@@ -345,7 +345,12 @@ seq_limit (u ∘ φ) l := by {
 
 /-- If `u` tends to `l` all its cluster points are equal to `l`. -/
 lemma cluster_limit (hl : seq_limit u l) (ha : cluster_point u a) : a = l := by {
-  sorry
+  unfold cluster_point at ha
+  rcases ha with ⟨e, ⟨he, hsl⟩⟩
+  have hsl' : seq_limit (u ∘ e) l := by {
+    apply (subseq_tendsto_of_tendsto' hl he)
+  }
+  apply (uniq_limit hsl hsl')
 }
 
 /-- Cauchy_sequence sequence -/
