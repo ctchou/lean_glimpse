@@ -169,6 +169,17 @@ example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' :
             _ = ε := by { ring }
 }
 
+/- An alternative proof of the squeezing theorem suggested by Pascalin Amabegnon. -/
+example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' : ∀ n, v n ≤ w n) :
+    seq_limit v l := by {
+  intro ε hε
+  specialize hu ε hε
+  specialize hw ε hε
+  have hw1 : ∃ N, ∀ n ≥ N, w n - l ≤ ε := by {
+
+  }
+
+}
 
 /- In the next exercise, we'll use
 
