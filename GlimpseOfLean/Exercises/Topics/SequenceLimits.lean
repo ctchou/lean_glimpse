@@ -358,7 +358,17 @@ def CauchySequence (u : ℕ → ℝ) :=
   ∀ ε > 0, ∃ N, ∀ p q, p ≥ N → q ≥ N → |u p - u q| ≤ ε
 
 example : (∃ l, seq_limit u l) → CauchySequence u := by {
-  sorry
+  intro hle ε hε
+  have hh : ε/2 > 0 := by { linarith }
+  rcases hle with ⟨l, hsl⟩
+  specialize hsl (ε/2) hh
+  rcases hsl with ⟨N, hN⟩
+  use N
+  intro p q hp hq
+  have hup : |u p - l| ≤ ε/2 := by { apply hN; tauto }
+  have huq : |u q - l| ≤ ε/2 := by { apply hN; tauto }
+  calc |u p - u q| ≤ |u p - l| + |u q - l| := by { apply abs_sub_le' }
+                 _ ≤ ε := by { linarith }
 }
 
 /-
