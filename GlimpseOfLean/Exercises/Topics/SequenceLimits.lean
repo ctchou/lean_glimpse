@@ -329,7 +329,18 @@ lemma near_cluster :
 /-- If `u` tends to `l` then its subsequences tend to `l`. -/
 lemma subseq_tendsto_of_tendsto' (h : seq_limit u l) (hφ : extraction φ) :
 seq_limit (u ∘ φ) l := by {
-  sorry
+  intro ε hε
+  specialize h ε hε
+  rcases h with ⟨N, hN⟩
+  use N
+  intro n hn
+  have h1 : φ n ≥ n := by {
+    apply id_le_extraction'
+    apply hφ
+  }
+  have h2 : φ n ≥ N := by { linarith }
+  specialize hN (φ n) h2
+  tauto
 }
 
 /-- If `u` tends to `l` all its cluster points are equal to `l`. -/
