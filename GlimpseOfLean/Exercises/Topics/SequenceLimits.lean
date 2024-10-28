@@ -376,5 +376,18 @@ In the next exercise, you can reuse
  near_cluster : cluster_point u a → ∀ ε > 0, ∀ N, ∃ n ≥ N, |u n - a| ≤ ε
 -/
 
-example (hu : CauchySequence u) (hl : cluster_point u l) : seq_limit u l := by
-  sorry
+example (hu : CauchySequence u) (hl : cluster_point u l) : seq_limit u l := by {
+  intro ε hε
+  have hh : ε/2 > 0 := by { linarith }
+  specialize hu (ε/2) hh
+  rcases hu with ⟨N, hpq⟩
+  use N
+  intro n hn
+  have hN' : ∃ N', N' ≥ N ∧ |u N' - l| ≤ ε/2 := by {
+    apply (near_cluster hl (ε/2) hh N)
+  }
+  rcases hN' with ⟨N', ⟨hN', huN'⟩⟩
+  specialize hpq n N' hn hN'
+  calc |u n - l| ≤ |u n - u N'| + |u N' - l| := by { apply abs_sub_le }
+               _ ≤ ε := by { linarith }
+}
