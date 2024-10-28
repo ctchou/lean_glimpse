@@ -175,10 +175,34 @@ example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' :
   intro ε hε
   specialize hu ε hε
   specialize hw ε hε
-  have hw1 : ∃ N, ∀ n ≥ N, w n - l ≤ ε := by {
-
+  rcases hu with ⟨Nu, hNu⟩
+  rcases hw with ⟨Nw, hNw⟩
+  use (max Nu Nw)
+  intro n hmax
+  have hw' : w n - l ≤ ε := by {
+    have hnw : n ≥ Nw := by { apply? }
+    specialize hNw n hnw
+    rw [abs_le] at hNw
+    linarith
   }
-
+  have hu' : u n - l ≥ -ε := by {
+    have hnu : n ≥ Nu := by { apply? }
+    specialize hNu n hnu
+    rw [abs_le] at hNu
+    linarith
+  }
+  have hvw : v n - l ≤ ε := by {
+    specialize h' n
+    linarith
+  }
+  have hvu : v n - l ≥ -ε := by {
+    specialize h n
+    linarith
+  }
+  rw [abs_le]
+  constructor
+  . linarith
+  . linarith
 }
 
 /- In the next exercise, we'll use
