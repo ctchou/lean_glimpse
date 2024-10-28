@@ -180,13 +180,13 @@ example (hu : seq_limit u l) (hw : seq_limit w l) (h : ∀ n, u n ≤ v n) (h' :
   use (max Nu Nw)
   intro n hmax
   have hw' : w n - l ≤ ε := by {
-    have hnw : n ≥ Nw := by { apply? }
+    have hnw : n ≥ Nw := by { exact le_of_max_le_right hmax }
     specialize hNw n hnw
     rw [abs_le] at hNw
     linarith
   }
   have hu' : u n - l ≥ -ε := by {
-    have hnu : n ≥ Nu := by { apply? }
+    have hnu : n ≥ Nu := by { exact le_of_max_le_left hmax }
     specialize hNu n hnu
     rw [abs_le] at hNu
     linarith
