@@ -32,19 +32,19 @@ def isInf (s : Set X) (x₀ : X) :=
   ∀ x, x ∈ lowerBounds s ↔ x ≤ x₀
 
 lemma isInf.lowerBound {s : Set X} {x₀ : X} (h : isInf s x₀) : x₀ ∈ lowerBounds s := by {
+--  sorry
   unfold isInf at h
   rw [h]
---  sorry
 }
 
 /-- A set has at most one infimum. -/
 def isInf.eq {s : Set X} {x₀ x₁ : X} (hx₀ : isInf s x₀) (hx₁ : isInf s x₁) : x₀ = x₁ := by {
+--  sorry
   have hlb0 : x₀ ∈ lowerBounds s := by { exact (isInf.lowerBound hx₀) }
   have hlb1 : x₁ ∈ lowerBounds s := by { exact (isInf.lowerBound hx₁) }
   have h01: x₀ ≤ x₁ := by { rw [← hx₁]; tauto }
   have h10: x₁ ≤ x₀ := by { rw [← hx₀]; tauto }
   apply (le_antisymm h01 h10)
---  sorry
 }
 
 /-- An element `x₀` is an supremum of a set `s` in `X` if every element
@@ -79,7 +79,24 @@ def isSupFun (S : Set X → X) :=
 infimum function then it automatically admits a supremum function. -/
 
 lemma isSup_of_isInf {I : Set X → X} (h : isInfFun I) : isSupFun (fun s ↦ I (upperBounds s)) := by {
-  sorry
+--  sorry
+  unfold isInfFun at h
+  intro s x
+  specialize h (upperBounds s)
+  simp
+  constructor
+  . intro hx
+    have h1 : I (upperBounds s) ∈ (lowerBounds (upperBounds s)) := by {
+      exact isInf.lowerBound h
+    }
+    apply (h1 hx)
+  . intro hx a ha
+    have h2 : a ∈ (lowerBounds (upperBounds s)) := by {
+      intro y hy
+      apply (hy ha)
+    }
+    rw [h] at h2
+    apply (le_trans h2 hx)
 }
 
 /- Of course we also have the dual result constructing an infimum function from
