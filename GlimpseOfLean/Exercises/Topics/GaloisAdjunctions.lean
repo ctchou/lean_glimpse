@@ -234,7 +234,9 @@ lemma image_preimage_adjunction {α β : Type} (f : α → β) :
 lemma adjunction.dual [PartialOrder X] [PartialOrder Y] {l : X → Y} {r : Y → X}
     (h : adjunction l r) :
     adjunction (X := OrderDual Y) (Y := OrderDual X) r l := by {
-  sorry
+--  sorry
+  intro y x
+  exact Iff.symm (h x y)
 }
 
 /- In this remaining of the section, `X` and `Y` are complete lattices. -/
